@@ -1,0 +1,5 @@
+{
+  "name": "Mac Dictation App Guide",
+  "description": "Documentation and Swift source code for building a native macOS global dictation app.",
+  "requestFramePermissions": []
+}
