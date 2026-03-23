@@ -1,23 +1,44 @@
 import { useState } from 'react';
-import { Mic, Download, Zap, Lock, Command, Apple, Sparkles } from 'lucide-react';
-import { motion } from 'motion/react';
+import { Mic, Download, Zap, Lock, Command, Apple, Sparkles, X, FileText } from 'lucide-react';
+import { motion, AnimatePresence } from 'motion/react';
 
 export default function App() {
-  const handleDownload = () => {
-    // Create a dummy DMG file for download
-    const content = "Placeholder DMG. macOS apps cannot be compiled in this Linux web environment. Please compile the provided Swift code in Xcode.";
-    const blob = new Blob([content], { type: 'application/x-apple-diskimage' });
+  const [showModal, setShowModal] = useState(false);
+
+  const handleDownloadSource = () => {
+    const sourceCode = `FlowFlow - macOS Dictation App
+================================
+
+Because this AI environment runs in a Linux web container, it cannot compile native macOS applications or generate valid .dmg files. 
+
+To build this app, open Xcode on your Mac, create a new macOS App project, and use the following Swift code:
+
+// --- App.swift ---
+import SwiftUI
+
+@main
+struct FlowFlowApp: App {
+    @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
+    var body: some Scene {
+        Settings { Text("FlowFlow Settings") }
+    }
+}
+
+class AppDelegate: NSObject, NSApplicationDelegate {
+    func applicationDidFinishLaunching(_ notification: Notification) {
+        print("FlowFlow Started. Please add HotkeyMonitor and TextInjector implementations.")
+    }
+}
+`;
+    const blob = new Blob([sourceCode], { type: 'text/plain' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'FlowClone-v1.0.dmg';
+    a.download = 'FlowFlow-Instructions.txt';
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
-    
-    // Alert the user about the environment limitation
-    alert("Download started!\n\nNote: Because this is a web-based Linux environment, it cannot compile a real macOS .dmg file. The downloaded file is a placeholder. To get the real working app, the Swift code must be compiled in Xcode on a Mac.");
   };
 
   return (
@@ -28,7 +49,7 @@ export default function App() {
           <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center shadow-lg shadow-orange-500/20">
             <Mic className="w-5 h-5 text-white" />
           </div>
-          <span>FlowClone</span>
+          <span>FlowFlow</span>
         </div>
         <div className="hidden md:flex items-center gap-8 text-sm font-medium text-zinc-400">
           <a href="#features" className="hover:text-white transition-colors">Features</a>
@@ -36,7 +57,7 @@ export default function App() {
           <a href="#privacy" className="hover:text-white transition-colors">Privacy</a>
         </div>
         <button 
-          onClick={handleDownload}
+          onClick={() => setShowModal(true)}
           className="flex items-center gap-2 bg-zinc-800 hover:bg-zinc-700 text-white px-4 py-2 rounded-full text-sm font-medium transition-colors"
         >
           <Download className="w-4 h-4" />
@@ -74,7 +95,7 @@ export default function App() {
           transition={{ duration: 0.5, delay: 0.2 }}
           className="text-lg md:text-xl text-zinc-400 max-w-2xl mb-12 leading-relaxed"
         >
-          Hold the Control key, speak naturally, and release. FlowClone instantly transcribes your voice and types it into any active Mac application.
+          Hold the Control key, speak naturally, and release. FlowFlow instantly transcribes your voice and types it into any active Mac application.
         </motion.p>
 
         <motion.div 
@@ -84,7 +105,7 @@ export default function App() {
           className="flex flex-col sm:flex-row items-center gap-4"
         >
           <button 
-            onClick={handleDownload}
+            onClick={() => setShowModal(true)}
             className="flex items-center justify-center gap-3 bg-orange-500 hover:bg-orange-600 text-white px-8 py-4 rounded-full text-lg font-medium transition-all hover:scale-105 active:scale-95 shadow-lg shadow-orange-500/25 w-full sm:w-auto"
           >
             <Apple className="w-5 h-5" />
@@ -163,6 +184,67 @@ export default function App() {
           </div>
         </div>
       </section>
+
+      {/* Modal */}
+      <AnimatePresence>
+        {showModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowModal(false)}
+              className="absolute inset-0 bg-black/80 backdrop-blur-sm"
+            />
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              className="relative w-full max-w-lg bg-zinc-900 border border-zinc-800 rounded-2xl shadow-2xl overflow-hidden"
+            >
+              <div className="p-6">
+                <div className="flex items-center justify-between mb-6">
+                  <h3 className="text-xl font-semibold text-white">Cannot Generate .dmg</h3>
+                  <button 
+                    onClick={() => setShowModal(false)}
+                    className="p-2 hover:bg-zinc-800 rounded-full transition-colors text-zinc-400 hover:text-white"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+                
+                <div className="space-y-4 text-zinc-300 leading-relaxed">
+                  <p>
+                    The file you previously downloaded was corrupted because <strong>this AI environment runs in a web browser</strong>. It is physically impossible for this web container to compile Apple Swift code or generate a valid macOS <code className="text-orange-400 bg-orange-400/10 px-1.5 py-0.5 rounded">.dmg</code> binary.
+                  </p>
+                  <p>
+                    The previous download was just a text file renamed to ".dmg", which is why your Mac rejected it.
+                  </p>
+                  <p>
+                    To actually use FlowFlow, you must download the Swift source code and compile it yourself using Xcode on a Mac.
+                  </p>
+                </div>
+
+                <div className="mt-8 flex flex-col gap-3">
+                  <button 
+                    onClick={handleDownloadSource}
+                    className="flex items-center justify-center gap-2 w-full bg-orange-500 hover:bg-orange-600 text-white px-4 py-3 rounded-xl font-medium transition-colors"
+                  >
+                    <FileText className="w-5 h-5" />
+                    <span>Download Source Code (.txt)</span>
+                  </button>
+                  <button 
+                    onClick={() => setShowModal(false)}
+                    className="flex items-center justify-center gap-2 w-full bg-zinc-800 hover:bg-zinc-700 text-white px-4 py-3 rounded-xl font-medium transition-colors"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
